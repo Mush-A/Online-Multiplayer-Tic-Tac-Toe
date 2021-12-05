@@ -1,0 +1,114 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: black;
+}
+
+#board {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: gray;
+  border: 2px solid black;
+  border-radius: 5px 5px 0 0;
+  color: white;
+  font-size: 16px;
+}
+
+#board #replay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  width: 6.45em;
+  background-color: purple;
+  border-left: 4px black solid;
+  border-radius: 0 5px 0 0;
+  user-select: none;
+}
+
+#board #replay:hover {
+  background-color: orangered;
+  cursor: pointer;
+}
+
+#board #replay #button {
+  padding: 0 1em;
+}
+
+#board #score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+#board #score span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: row;
+  padding: 0 1em;
+}
+
+.row {
+  display: flex;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: gray;
+  color: white;
+  border: 2px black solid;
+  height: 8em;
+  width: 8em;
+  user-select: none;
+}
+
+.container:hover {
+  background-color: gainsboro;
+  color: orangered;
+  cursor: pointer;
+}
+
+.container .val {
+  font-size: 60px;
+}
+
+#wrapper {
+  -webkit-box-shadow: 0px 0px 0px 0px gainsboro, 5px 5px 15px 5px gainsboro;
+  box-shadow: 0px 0px 0px 0px gainsboro, 0px 0px 25px -10px gainsboro;
+}
+
+#grid {
+  position: relative;
+}
+
+#overlay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  opacity: 0.9;
+  display: none;
+  background-color: black;
+}
+
+#message {
+  color: white;
+  font-size: 24px;
+}
