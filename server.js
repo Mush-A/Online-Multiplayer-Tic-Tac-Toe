@@ -18,6 +18,10 @@ app.get("/local", (req, res) => {
   res.sendFile(__dirname + "/view/local.html");
 });
 
+app.get("/join", (req, res) => {
+  res.sendFile(__dirname + "/view/join.html");
+});
+
 app.get("/online", (req, res) => {
   res.sendFile(__dirname + "/view/online.html");
 });
