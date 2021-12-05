@@ -27,8 +27,15 @@ app.get("/online", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("login", (msg) => {
-    console.log(msg);
+  socket.on("login", (THIS_PLAYER) => {
+    socket.join(THIS_PLAYER.room_id);
+
+    socket.broadcast
+      .to(THIS_PLAYER.room_id)
+      .emit(
+        "message",
+        THIS_PLAYER.username + " Welcome to room " + THIS_PLAYER.room_id
+      );
   });
 });
 

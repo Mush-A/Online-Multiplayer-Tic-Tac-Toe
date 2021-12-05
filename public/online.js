@@ -7,6 +7,8 @@ const gridElement = document.getElementById("grid");
 const replayElement = document.getElementById("replay");
 const player1 = document.getElementById("player1");
 const player2 = document.getElementById("player2");
+const player1Text = document.getElementById("player1-text");
+const player2Text = document.getElementById("player2-text");
 const player1Score = document.getElementById("player1-score");
 const player2Score = document.getElementById("player2-score");
 const overlay = document.getElementById("overlay");
@@ -20,10 +22,29 @@ const MATRIX = [
 
 let STARTED = false;
 let PLAYER_CURRENT = 1;
-let THIS_PLAYER = 1;
 let PLAYER_ONE_SCORE = 0;
 let PLAYER_TWO_SCORE = 0;
 let DRAW = false;
+let THIS_PLAYER = {
+  username: "",
+  room_id: "",
+  number: 0,
+};
+
+// Initials
+THIS_PLAYER = {
+  ...Qs.parse(window.location.search, {
+    ignoreQueryPrefix: true,
+  }),
+};
+
+socket.emit("login", THIS_PLAYER);
+
+socket.on("message", (msg) => {
+  console.log(msg);
+});
+
+player1Text.innerHTML = THIS_PLAYER.username;
 
 // Event Listeners
 replayElement.addEventListener("click", () => {
