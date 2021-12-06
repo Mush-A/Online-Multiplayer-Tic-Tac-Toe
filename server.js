@@ -28,14 +28,20 @@ app.get("/online", (req, res) => {
 
 io.on("connection", (socket) => {
   socket.on("login", (THIS_PLAYER) => {
-    socket.join(THIS_PLAYER.room_id);
+    let room = io.sockets.adapter.rooms.get(THIS_PLAYER.room_id);
 
-    socket.broadcast
-      .to(THIS_PLAYER.room_id)
-      .emit(
-        "message",
-        THIS_PLAYER.username + " Welcome to room " + THIS_PLAYER.room_id
-      );
+    if (!room) {
+      socket.join(THIS_PLAYER.room_id);
+    } else if (room.size === 0 || room.size === 1) {
+      socket.join(THIS_PLAYER.room_id);
+      socket.broadcast.to(THIS_PLAYER.room_id).emit("setPlayer", 2);
+    } else {
+      return console.log("room full");
+    }
+
+    socket.on("move", (obj) => {
+      socket.broadcast.to(THIS_PLAYER.room_id).emit("move", obj);
+    });
   });
 });
 

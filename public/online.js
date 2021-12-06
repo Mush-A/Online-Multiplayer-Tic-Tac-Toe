@@ -21,30 +21,36 @@ const MATRIX = [
 ];
 
 let STARTED = false;
-let PLAYER_CURRENT = 1;
 let PLAYER_ONE_SCORE = 0;
 let PLAYER_TWO_SCORE = 0;
 let DRAW = false;
 let THIS_PLAYER = {
   username: "",
   room_id: "",
-  number: 0,
+  number: 1,
 };
 
 // Initials
 THIS_PLAYER = {
+  ...THIS_PLAYER,
   ...Qs.parse(window.location.search, {
     ignoreQueryPrefix: true,
   }),
 };
 
+player1Text.innerHTML = THIS_PLAYER.username;
+
 socket.emit("login", THIS_PLAYER);
 
-socket.on("message", (msg) => {
-  console.log(msg);
+// If there is a person in the room. Set this person as second player
+socket.on("setPlayer", (number) => {
+  THIS_PLAYER.number = number;
 });
 
-player1Text.innerHTML = THIS_PLAYER.username;
+socket.on("move", (obj) => {
+  register(obj.pos, obj.number, MATRIX);
+  update();
+});
 
 // Event Listeners
 replayElement.addEventListener("click", () => {
@@ -79,11 +85,11 @@ const update = () => {
   player2Score.innerHTML = PLAYER_TWO_SCORE;
 
   // Change appearance
-  if (PLAYER_CURRENT === 1) {
+  if (THIS_PLAYER.number === 1) {
     player1.style.color = "orange";
     player2.style.color = "white";
   }
-  if (PLAYER_CURRENT === 2) {
+  if (THIS_PLAYER.number === 2) {
     player1.style.color = "white";
     player2.style.color = "orange";
   }
@@ -98,7 +104,7 @@ const reset = (MATRIX) => {
   }
 
   STARTED = false;
-  PLAYER_CURRENT = 1;
+  THIS_PLAYER.number = 1;
   PLAYER_ONE_SCORE = 0;
   PLAYER_TWO_SCORE = 0;
   DRAW = false;
@@ -129,15 +135,15 @@ const draw = (MATRIX) => {
   }
 };
 
-const register = (pos, PLAYER_CURRENT, MATRIX) => {
+const register = (pos, number, MATRIX) => {
   let row, col, win;
   row = pos[0];
   col = pos[1];
   if (MATRIX[row][col] === 0) {
-    MATRIX[row][col] = PLAYER_CURRENT;
+    MATRIX[row][col] = number;
   }
 
-  win = Check.check(MATRIX, PLAYER_CURRENT);
+  win = Check.check(MATRIX, number);
 
   if (win === 1) {
     PLAYER_ONE_SCORE++;
@@ -155,16 +161,12 @@ const click = (e) => {
   STARTED = true;
   let pos;
   pos = e.target.id.split("-");
-
-  if (PLAYER_CURRENT === 1) {
-    register(pos, PLAYER_CURRENT, MATRIX);
-    PLAYER_CURRENT = 2;
-    update();
-  } else if (PLAYER_CURRENT === 2) {
-    register(pos, PLAYER_CURRENT, MATRIX);
-    PLAYER_CURRENT = 1;
-    update();
-  }
+  register(pos, THIS_PLAYER.number, MATRIX);
+  update();
+  socket.emit("move", {
+    pos,
+    number: THIS_PLAYER.number,
+  });
 };
 
 // Create the grid add the interactivity
