@@ -31,16 +31,44 @@ io.on("connection", (socket) => {
     let room = io.sockets.adapter.rooms.get(THIS_PLAYER.room_id);
 
     if (!room) {
+      // Join the first player
       socket.join(THIS_PLAYER.room_id);
-    } else if (room.size === 0 || room.size === 1) {
+
+      // Send to self - player one
+      io.to(socket.id).emit("playerOne");
+      //
+    } else if (room.size === 1) {
+      // Join the second player
       socket.join(THIS_PLAYER.room_id);
-      socket.broadcast.to(THIS_PLAYER.room_id).emit("setPlayer", 2);
+
+      // Send to self - player two
+      io.to(socket.id).emit("playerTwo");
+
+      //send out connection status between the players.
+      io.in(THIS_PLAYER.room_id).emit("connected");
+      //
     } else {
       return console.log("room full");
     }
 
-    socket.on("move", (obj) => {
-      socket.broadcast.to(THIS_PLAYER.room_id).emit("move", obj);
+    // Exchange data about each other
+    socket.on("dataExchange", (THIS_PLAYER) => {
+      socket.broadcast
+        .to(THIS_PLAYER.room_id)
+        .emit("dataExchange", THIS_PLAYER);
+    });
+
+    // Exchange moves
+    socket.on("move", (data) => {
+      socket.broadcast.to(THIS_PLAYER.room_id).emit("move", data);
+    });
+
+    socket.on("win", (win) => {
+      io.in(THIS_PLAYER.room_id).emit("win", win);
+    });
+
+    socket.on("reset", () => {
+      io.in(THIS_PLAYER.room_id).emit("reset");
     });
   });
 });
