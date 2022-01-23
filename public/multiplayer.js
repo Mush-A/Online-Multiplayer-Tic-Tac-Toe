@@ -27,6 +27,15 @@ let THIS_PLAYER = {
 
 let THAT_PLAYER;
 
+if (!THAT_PLAYER) {
+  console.log("No one connected");
+}
+
+socket.on("disconnected", () => {
+  console.log(THIS_PLAYER.username, "disconnected");
+  window.location.href = "/join";
+});
+
 socket.on("connected", () => {
   socket.emit("dataExchange", THIS_PLAYER);
 });
@@ -154,7 +163,7 @@ socket.on("reset", () => {
     }
   }
 
-  message.innerHTML = `Game resetted`;
+  message.innerHTML = `Game reset`;
 
   overlay.style.display = "flex";
 

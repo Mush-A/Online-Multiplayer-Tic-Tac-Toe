@@ -70,6 +70,10 @@ io.on("connection", (socket) => {
     socket.on("reset", () => {
       io.in(THIS_PLAYER.room_id).emit("reset");
     });
+
+    socket.on("disconnect", () => {
+      io.in(THIS_PLAYER.room_id).emit("disconnected");
+    });
   });
 });
 
