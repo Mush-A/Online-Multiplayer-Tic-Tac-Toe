@@ -1,4 +1,5 @@
 import Check from "./check.js";
+import { v4 as uuidv4 } from "https://cdn.skypack.dev/uuid";
 import { io } from "https://cdn.socket.io/4.3.2/socket.io.esm.min.js";
 const socket = io();
 
@@ -17,6 +18,7 @@ const MATRIX = [
 
 let THIS_PLAYER = {
   username: "",
+  player_id: uuidv4(),
   room_id: "",
   score: 0,
   number: "",
@@ -33,14 +35,12 @@ socket.on("playerOne", () => {
   THIS_PLAYER.number = 1;
   THIS_PLAYER.turn = true;
   player1Text.innerHTML = THIS_PLAYER.username;
-  console.log("You are X");
 });
 
 socket.on("playerTwo", () => {
   THIS_PLAYER.number = 2;
   THIS_PLAYER.turn = false;
   player2Text.innerHTML = THIS_PLAYER.username;
-  console.log("You are O");
 });
 
 socket.on("dataExchange", (opponent) => {
@@ -131,9 +131,6 @@ socket.on("move", (data) => {
 });
 
 socket.on("win", (win) => {
-  console.log(win, parseInt(THIS_PLAYER.number));
-  console.log(win, parseInt(THAT_PLAYER.number));
-
   if (win == parseInt(THIS_PLAYER.number)) {
     overlay.style.display = "flex";
     message.innerHTML = `${THIS_PLAYER.username} wins`;
@@ -149,21 +146,13 @@ replayElement.addEventListener("click", () => {
   socket.emit("reset");
 });
 
-const reset = () => {
+socket.on("reset", () => {
   for (let i = 0; i < MATRIX.length; i++) {
     for (let j = 0; j < MATRIX[i].length; j++) {
       MATRIX[i][j] = 0;
       document.getElementById(`${i}-${j}`).innerHTML = ``;
     }
   }
-
-  THIS_PLAYER = {
-    username: "",
-    room_id: "",
-    score: 0,
-    number: "",
-    turn: false,
-  };
 
   message.innerHTML = `Game resetted`;
 
@@ -172,9 +161,7 @@ const reset = () => {
   setTimeout(() => {
     overlay.style.display = "none";
   }, 1000);
-};
-
-socket.on("reset", reset);
+});
 
 setThisPlayer();
 login();
